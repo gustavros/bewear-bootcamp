@@ -1,0 +1,21 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#28301D",
+        "titleBar.activeBackground": "#384328",
+        "titleBar.activeForeground": "#FAFBF9"
+    },
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    }
+}

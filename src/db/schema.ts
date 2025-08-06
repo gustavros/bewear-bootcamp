@@ -1,13 +1,11 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-// tabela de usuários
 export const userTable = pgTable("user", {
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
 });
 
-// tabela de categorias
 export const categoryTable = pgTable("category", {
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
@@ -16,12 +14,10 @@ export const categoryTable = pgTable("category", {
 });
 
 
-// relacionamento entre categorias e produtos
 export const categoryRelations = relations(categoryTable, ({ many }) => ({
     products: many(productTable),
 }));
 
-// tabela de produtos
 export const productTable = pgTable("product", {
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
@@ -31,7 +27,6 @@ export const productTable = pgTable("product", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
-// tabela de variações de produtos
 export const productVariantTable = pgTable("product_variant", {
     id: uuid().primaryKey().defaultRandom(),
     productId: uuid("product_id").notNull().references(() => productTable.id),
@@ -43,19 +38,17 @@ export const productVariantTable = pgTable("product_variant", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// relacionamento entre variações de produtos e produtos
 export const productVariantRelations = relations(productVariantTable, ({ one, many }) => ({
     product: one(productTable, {
         fields: [productVariantTable.productId],
         references: [productTable.id],
     }),
-    variants: many(productVariantTable), // um produto pode ter várias variações
+    variants: many(productVariantTable),
 }));
 
-// relacionamento entre produtos e categorias. exemplo: um produto pertence a uma categoria.
 export const productRelations = relations(productTable, ({ one }) => ({
     category: one(categoryTable, {
-        fields: [productTable.categoryId], // campo da tabela de produtos que referencia a tabela de categorias
-        references: [categoryTable.id], // campo da tabela de categorias que referencia a tabela de produtos
+        fields: [productTable.categoryId],
+        references: [categoryTable.id],
     }),
 }));

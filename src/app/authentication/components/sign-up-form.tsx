@@ -31,8 +31,10 @@ const SignUpForm = () => {
 
     function onSubmit(values: FormValues) {
         console.log(values);
-        form.reset();
-        form.clearErrors();
+
+        const { name, email, password } = values;
+
+        console.log({ name, email, password });
     }
 
     return (

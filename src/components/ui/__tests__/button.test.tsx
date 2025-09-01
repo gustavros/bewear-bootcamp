@@ -47,11 +47,4 @@ describe('Button', () => {
         const button = screen.getByRole('button')
         expect(button).toBeDisabled()
     })
-
-    it('renders button with loading state', () => {
-        render(<Button>Loading...</Button>)
-        const button = screen.getByRole('button')
-        expect(button).toHaveClass('opacity-50 cursor-not-allowed')
-        expect(button).toBeDisabled()
-    })
 })

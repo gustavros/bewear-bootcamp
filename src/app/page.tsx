@@ -1,49 +1,35 @@
-"use client"
+import { desc } from "drizzle-orm";
+import Image from "next/image";
 
-import { useRouter } from "next/navigation";
+import Header from "@/components/common/header";
+import ProductList from "@/components/common/product-list";
+import { db } from "@/db";
+import { productTable } from "@/db/schema";
 
-import { authClient } from "@/lib/auth-client";
+const Home = async () => {
+  const getNewlyCreatedProducts = async () => {
+    const products = await db.query.productTable.findMany({
+      orderBy: [desc(productTable.createdAt)],
+      with: {
+        variants: true,
+      },
+    });
 
-const Home = () => {
-  const router = useRouter();
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-  } = authClient.useSession()
+    return products;
+  };
 
-  if (isPending) {
-    return <div>Carregando...</div>
-  }
-
-  if (error) {
-    return <div>Erro ao carregar sessão</div>
-  }
+  const products = await getNewlyCreatedProducts();
 
   return (
     <>
-      <div className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className="text-4xl font-bold">Bem-vindo ao BeWear</h1>
-        <p className="mt-4 text-lg">Sua plataforma de moda consciente.</p>
+      <Header />
 
-        {session ? (
-          <p className="mt-2 text-green-600">
-            Logado como: {session.user.email}
-          </p>
-        ) : (
-          <p className="mt-2 text-red-600">
-            Usuário não está logado
-          </p>
-        )}
+      <div className="px-5 space-y-6">
+        <Image src="/banner-01.png" alt="Hero Image" width={0} height={0} className="h-auto w-full" sizes="100vw" />
 
-        <div className="mt-6 space-x-4">
-          <button className="rounded bg-blue-500 px-4 py-2 text-white" onClick={() => router.push(session ? "/" : "/authentication")}>
-            {session ? "Acessar Dashboard" : "Fazer Login"}
-          </button>
-          <button className="rounded bg-gray-300 px-4 py-2 text-black" onClick={() => authClient.signOut()}>
-            Sair
-          </button>
-        </div>
+        <ProductList title="Mais vendidos" products={products} />
+
+        <Image src="/banner-02.png" alt="Hero Image" width={0} height={0} className="h-auto w-full" sizes="100vw" />
       </div>
     </>
   );

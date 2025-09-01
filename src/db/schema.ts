@@ -80,17 +80,17 @@ export const productVariantTable = pgTable("product_variant", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const productVariantRelations = relations(productVariantTable, ({ one, many }) => ({
+export const productVariantRelations = relations(productVariantTable, ({ one }) => ({
     product: one(productTable, {
         fields: [productVariantTable.productId],
         references: [productTable.id],
     }),
-    variants: many(productVariantTable),
 }));
 
-export const productRelations = relations(productTable, ({ one }) => ({
+export const productRelations = relations(productTable, ({ one, many }) => ({
     category: one(categoryTable, {
         fields: [productTable.categoryId],
         references: [categoryTable.id],
     }),
+    variants: many(productVariantTable),
 }));

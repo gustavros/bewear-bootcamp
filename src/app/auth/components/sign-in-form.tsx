@@ -14,7 +14,7 @@ import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
     email: z.email("E-mail inválido!"),
-    password: z.string("Senha deve ter pelo menos 6 caracteres.").min(6).max(100),
+    password: z.string("Senha deve ter pelo menos 6 caracteres.").min(8).max(100),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -36,15 +36,18 @@ const SignInForm = () => {
             fetchOptions: {
                 onSuccess: () => {
                     router.push("/");
-
                 },
-                onError: (error) => {
-                    if (error.error.code === "EMAIL_ALREADY_EXISTS") {
+                onError: (ctx) => {
+                    if (ctx.error.code === "EMAIL_ALREADY_EXISTS") {
                         toast.error("E-mail já cadastrado.");
+                        form.setError("email",
+                            { message: "E-mail já cadastrado." }
+                        );
+
                         return;
                     }
 
-                    toast.error(error.error.message);
+                    toast.error(ctx.error.message);
                 }
 
             }
@@ -83,7 +86,10 @@ const SignInForm = () => {
                                 <FormItem>
                                     <FormLabel>Senha</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="********" {...field} type="password" />
+                                        <Input
+                                            {...field}
+                                            placeholder="********"
+                                            type="password" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

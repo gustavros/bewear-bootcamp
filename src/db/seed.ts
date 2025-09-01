@@ -596,8 +596,8 @@ async function main() {
         const productKey = productData.name as keyof typeof productImages;
         const variantImages =
           productImages[productKey]?.[
-          variantData.color as keyof (typeof productImages)[typeof productKey]
-          ] || [];
+            variantData.color as keyof (typeof productImages)[typeof productKey]
+          ]?.[0] || "";
 
         console.log(`  🎨 Criando variante: ${variantData.color}`);
 

@@ -1,13 +1,16 @@
 'use client'
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod"
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
     email: z.email("E-mail inválido!"),
@@ -17,14 +20,35 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignInForm = () => {
+    const router = useRouter();
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {},
     })
 
-    function onSubmit(values: FormValues) {
-        console.log(values)
-        console.log("Enviado!")
+    async function onSubmit(values: FormValues) {
+        const { email, password } = values;
+
+        await authClient.signIn.email({
+            email,
+            password,
+            callbackURL: "http://localhost:3000/",
+            fetchOptions: {
+                onSuccess: () => {
+                    router.push("/");
+
+                },
+                onError: (error) => {
+                    if (error.error.code === "EMAIL_ALREADY_EXISTS") {
+                        toast.error("E-mail já cadastrado.");
+                        return;
+                    }
+
+                    toast.error(error.error.message);
+                }
+
+            }
+        });
     }
 
     return (
@@ -66,7 +90,11 @@ const SignInForm = () => {
                             )}
                         />
 
-                        <Button type="submit">Entrar</Button>
+                        <Button
+                            disabled={form.formState.isSubmitting}
+                            type="submit">
+                            {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+                        </Button>
                     </form>
                 </Form>
             </CardContent>

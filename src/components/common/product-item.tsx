@@ -5,7 +5,7 @@ import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 import { cn } from "@/lib/utils";
 
-interface ProductItemProps {
+export interface ProductItemProps {
     product: typeof productTable.$inferSelect & {
         variants: (typeof productVariantTable.$inferSelect)[];
     };
@@ -35,13 +35,14 @@ const ProductItem = ({ product, textContainerClassName }: ProductItemProps) => {
                     textContainerClassName,
                 )}
             >
-                <p className="truncate text-sm font-medium">{product.name}</p>
+                <h2 className="truncate text-sm font-medium">{product.name}</h2>
                 <p className="text-muted-foreground truncate text-xs font-medium">
                     {product.description}
                 </p>
-                <p className="truncate text-sm font-semibold">
+
+                <span className="truncate text-sm font-semibold">
                     {formatCentsToBRL(firstVariant.priceInCents)}
-                </p>
+                </span>
             </div>
         </Link>
     );
